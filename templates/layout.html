@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Airline_System{% endblock %}</title>
+    <style>
+        :root {
+            --primary: #1174FD;
+            --primary-dark: #0d5bc7;
+            --secondary: #34c759;
+            --gray-light: #f8f9fa;
+            --gray: #e9ecef;
+            --dark: #343a40;
+            --danger: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .content-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #2aa84a;
+        }
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        btn-outline {
+            background: transparent;
+            border: 2px solid #333;
+            color: #333;
+        }
+        .btn-outline:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+        
+        tr:hover {
+            background-color: var(--gray-light);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type='password']{
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type='password']:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .error {
+            color: var(--danger);
+            margin-bottom: 15px;
+        }
+        
+        .success {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .blu {
+            color: var(--primary);
+        }
+        
+        .booking-code {
+            font-size: 32px;
+            color: var(--secondary);
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0fff4;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .flight-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .flight-detail svg {
+            margin: 0 10px;
+        }
+        
+        .passenger-list {
+            margin-top: 20px;
+        }
+        
+        .passenger-card {
+            background-color: var(--gray-light);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .welcome-msg {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #007bff;
+            background-color: #e6f0ff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-right: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+    <div class="container header-content">
+        <div class="logo">
+            <a href="{% url 'index' %}">SkyJourney Airways</a>
+        </div>
+        <div class="header-buttons">
+            {% if user.is_authenticated %}
+                <span class="welcome-msg">Welcome, {{ user.username }}</span>
+                <a href="{% url 'manage_booking' %}" class="btn btn-outline">Manage My Booking</a>
+{#                <form method="post" action="{% url 'logout' %}">#}
+{#                    {% csrf_token %}#}
+{#                    <button type="submit" class="btn btn-outline">Logout</button>#}
+{#                </form>#}
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+    
+    <div class="container">
+        {% block body %}
+        {% endblock %}
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 SkyJourney Airways. All rights reserved.</p>
+        </div>
+    </footer>
+<!-- Add this script to your layout.html -->
+<script>
+    // Check for JWT token on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const accessToken = localStorage.getItem('access_token');
+        if (accessToken) {
+            // User is logged in via JWT
+            // You can use this token for API requests
+            fetch('/api/auth/profile/', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.username) {
+                    // Update UI to show logged in state
+                    const welcomeMsg = document.createElement('span');
+                    welcomeMsg.className = 'welcome-msg';
+                    welcomeMsg.textContent = `Welcome, ${data.username}`;
+                    
+                    const headerButtons = document.querySelector('.header-buttons');
+                    headerButtons.prepend(welcomeMsg);
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

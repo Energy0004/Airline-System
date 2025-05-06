@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage Booking - SkyJourney Airways{% endblock %}
+
+{% block body %}
+    <div class="content-card">
+        <h1>Manage Your Booking</h1>
+        
+        <p>Please enter your booking code to access your booking details.</p>
+        
+        <form method="post" action="{% url 'manage_booking' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="code">Booking Code</label>
+                <input type="text" id="code" name="code" placeholder="Enter your booking code">
+            </div>
+            
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+            
+            <div class="action-buttons">
+                <button type="submit" class="btn">Find My Booking</button>
+                <a href="{% url 'index' %}" class="btn btn-outline">Back to Homepage</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

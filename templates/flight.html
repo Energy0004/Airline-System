@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block title %}Flight Details - SkyJourney Airways{% endblock %}
+
+{% block body %}
+    <div class="content-card">
+        <h1>Flight Details</h1>
+        
+        <div class="flight-detail">
+            <span class="blu">{{ flights.origin }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+            </svg>
+            <span class="blu">{{ flights.destination }}</span>
+        </div>
+        
+        <p><strong>Duration:</strong> {{ flights.duration }} minutes</p>
+        <p><strong>Available seats:</strong> {{ flights.capacity }}</p>
+        
+        {% if bookings %}
+            <div class="passenger-list">
+                <h2>Passengers</h2>
+                {% for b in bookings %}
+                    <div class="passenger-card">
+                        <p><strong>Name:</strong> {{ b.passenger.name }}</p>
+                        <p><strong>Email:</strong> {{ b.passenger.email }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No passengers booked yet.</p>
+        {% endif %}
+        
+        <div class="action-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'flight_book' flights.id %}" class="btn btn-secondary">Book this flight</a>
+            {% endif %}
+            <a href="{% url 'index' %}" class="btn btn-outline">Back to All Flights</a>
+        </div>
+    </div>
+{% endblock %}

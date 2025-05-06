@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block title %}Booking Confirmed - SkyJourney Airways{% endblock %}
+
+{% block body %}
+    <div class="content-card">
+        <h1>Booking Confirmed</h1>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 20px 0;">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        
+        <p>Your flight has been successfully booked! Please keep your booking code for future reference.</p>
+        
+        <p>Your booking code is:</p>
+        <div class="booking-code">{{ booking_code }}</div>
+        
+        <p><strong>Important:</strong> You'll need this code to manage or view your booking details. Please save it or take a screenshot.</p>
+        
+        <div class="action-buttons">
+            <a href="{% url 'index' %}" class="btn">Return to Homepage</a>
+            <a href="{% url 'manage_booking' %}" class="btn btn-outline">Manage My Booking</a>
+        </div>
+    </div>
+{% endblock %}

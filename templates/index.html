@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block title %}SkyJourney Airways - Flight Listings{% endblock %}
+
+{% block body %}
+    <div class="content-card">
+        <h1>Available Flights</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="flights-table-body">
+                <!-- Flights will load here -->
+            </tbody>
+        </table>
+
+        <p id="no-flights-msg" style="display: none;">No flights available at the moment. Please check back later.</p>
+
+        <div class="action-buttons">
+            <a href="{% url 'manage_booking' %}" class="btn btn-secondary">Manage My Booking</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/flights/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const flightsTableBody = document.getElementById('flights-table-body');
+                    const noFlightsMsg = document.getElementById('no-flights-msg');
+
+                    if (data.length === 0) {
+                        noFlightsMsg.style.display = 'block';
+                        return;
+                    }
+
+                    data.forEach(flight => {
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+                            <td><a href="/airports/${flight.origin.id}/">${flight.origin.city_name} (${flight.origin.code})</a></td>
+                            <td><a href="/airports/${flight.destination.id}/">${flight.destination.city_name} (${flight.destination.code})</a></td>
+                            <td>${flight.duration} min</td>
+                            <td><a href="/flights/${flight.id}/" class="btn">View Details</a></td>
+                        `;
+                        flightsTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching flights:', error);
+                });
+        });
+    </script>
+{% endblock %}
