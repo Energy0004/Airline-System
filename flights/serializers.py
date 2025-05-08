@@ -32,6 +32,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['second_password']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
+
         return attrs
 
     def create(self, validated_data):
@@ -41,6 +42,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
 
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -53,6 +55,11 @@ class UserLoginSerializer(serializers.Serializer):
     def get_tokens(self, obj):
         user = User.objects.get(username=obj['username'])
         refresh = RefreshToken.for_user(user)
+
+        refresh['username'] = user.username
+        refresh['email'] = user.email
+        refresh['isAdmin'] = user.is_staff
+
         return {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
@@ -79,6 +86,30 @@ class UserLoginSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
+class UserUpdateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def validate_username(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(username=value).exists():
+            raise serializers.ValidationError("A user with this username already exists.")
+        return value
+
+    def validate_email(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return value
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data and validated_data['password']:
+            instance.set_password(validated_data.pop('password'))
+        return super().update(instance, validated_data)
+
 class AirportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Airport
@@ -101,9 +132,14 @@ class PassengerSerializer(serializers.ModelSerializer):
         model = Passenger
         fields = ['name', 'email']
 
+class BookingCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = ['booking_code']
+
 class BookingSerializer(serializers.ModelSerializer):
-    # passenger = PassengerSerializer()
+    passenger = PassengerSerializer()
     flight = FlightSerializer()
     class Meta:
         model = Booking
-        fields = ['id', 'passenger', 'flight', 'booking_code', 'user']
+        fields = ['id', 'passenger', 'flight', 'created_at', 'booking_code', 'user']

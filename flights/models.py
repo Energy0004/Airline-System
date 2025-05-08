@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.models import AbstractUser, Group, Permission, User
 from django.db import models
 
@@ -26,6 +28,7 @@ class Booking(models.Model):
     passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='passengers')
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name='flights')
     booking_code = models.CharField(max_length=100)
+    created_at = models.DateTimeField(default=datetime.datetime.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     def __str__(self):
         return f'{self.passenger}, {self.flight}, {self.booking_code}'

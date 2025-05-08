@@ -11,19 +11,11 @@ from .serializers import *
 from .models import *
 
 
-# def register(request):
-#     if request.method == 'POST':
-#         form = UserCreationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('login')
-#     else:
-#         form = UserCreationForm()
-#     return render(request, 'register.html', {'form': form})
 
 class UserAPIRegistration(APIView):
-
     def post(self, request):
+        if User.objects.filter(email=request.data['email']).exists():
+            raise serializers.ValidationError({"email": ["A user with that email already exists."]})
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -51,7 +43,6 @@ class UserAPILogin(APIView):
 
 class UserAPILogout(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request):
         try:
             refresh_token = request.data['refresh']
@@ -70,6 +61,59 @@ class UserAPIProfile(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+# class UsersAPIList(generics.ListAPIView)
+#     permission_classes = [IsAuthenticated]
+
+class UserAPIUpdate(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserUpdateSerializer(request.user)
+        return Response(serializer.data)
+
+    def put(self, request):
+        serializer = UserUpdateSerializer(request.user, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteAPIUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response({'message': 'User account deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
+class ChangePasswordAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+
+        if not new_password or not confirm_password:
+            return Response({"password": ["Both password fields are required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        if new_password != confirm_password:
+            return Response({"password": ["Passwords do not match."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as e:
+            return Response({"password": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
+
+
 class FlightAPIList(generics.ListAPIView):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
@@ -80,9 +124,9 @@ class FlightAPIDetails(generics.RetrieveAPIView):
     serializer_class = FlightSerializer
     # permission_classes = [permissions.AllowAny]
 
-class AirportAPIList(generics.ListAPIView):
-    queryset = Airport.objects.all()
-    serializer_class = AirportSerializer
+# class AirportAPIList(generics.ListAPIView):
+#     queryset = Airport.objects.all()
+#     serializer_class = AirportSerializer
 
 class AirportAPIDetails(generics.RetrieveAPIView):
     queryset = Airport.objects.all()
@@ -111,6 +155,10 @@ class MyBookingAPIDetails(generics.ListAPIView):
         user = self.request.user
         return Booking.objects.filter(user=user)
 
+class BookingAPIConfirmation(generics.RetrieveAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingCodeSerializer
+
 class BookingAPICreate(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -128,7 +176,6 @@ class BookingAPICreate(APIView):
 
             name = request.data.get("username")
             email = request.data.get("email")
-            # existing_booking = Booking.objects.filter(user=request.user, flight=flight).first()
             existing_booking = Booking.objects.filter(
                 flight=flight,
                 passenger__name=name
@@ -162,6 +209,19 @@ class BookingAPICreate(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+class BookingAPIFind(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        code = request.data.get('code')
+
+        if not code:
+            return Response({'error': 'Booking code is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if Booking.objects.filter(booking_code=code).exists():
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'error': 'Booking not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 class BookingAPIDetails(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
@@ -169,7 +229,7 @@ class BookingAPIDetails(generics.RetrieveAPIView):
     lookup_field = 'booking_code'
 
     def get_object(self):
-        booking_code = self.kwargs.get('pk')
+        booking_code = self.kwargs.get('booking_code')
         booking = get_object_or_404(Booking, booking_code=booking_code)
         return booking
 
@@ -199,6 +259,15 @@ class AdminBookingListAPIView(generics.ListAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
+# def register(request):
+#     if request.method == 'POST':
+#         form = UserCreationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('login')
+#     else:
+#         form = UserCreationForm()
+#     return render(request, 'register.html', {'form': form})
 # def index(request):
 #     flights = Flight.objects.all()
 #     return render(request, 'index.html', context={
