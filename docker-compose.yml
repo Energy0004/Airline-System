@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: "airline_system"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Maximum0004"
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    command: gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgres://postgres:Maximum0004@db:5432/airline_system"
+
+  frontend:
+    build:
+      context: C:/Users/Zhand/PycharmProjects/airline_system/Final Back/my-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+
+volumes:
+  postgres_data:
