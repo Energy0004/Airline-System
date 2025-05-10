@@ -16,14 +16,6 @@ from airline_system import settings
 from .serializers import *
 from .models import *
 
-
-# def promo_code(request):
-#     promo = request.session.get('has_seen_promo', None)
-#
-#     if promo and not request.user.is_authenticated:
-#         return JsonResponse({'has_seen_promo': promo})
-#     return JsonResponse({'has_seen_promo': None})
-
 class UserAPIRegistration(APIView):
     def post(self, request):
         if User.objects.filter(email=request.data['email']).exists():
