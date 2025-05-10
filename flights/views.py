@@ -1,16 +1,28 @@
 import random
 import string
 
+from django.contrib.auth.password_validation import get_password_validators
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import generics, viewsets, status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
+
+from airline_system import settings
 from .serializers import *
 from .models import *
 
 
+# def promo_code(request):
+#     promo = request.session.get('has_seen_promo', None)
+#
+#     if promo and not request.user.is_authenticated:
+#         return JsonResponse({'has_seen_promo': promo})
+#     return JsonResponse({'has_seen_promo': None})
 
 class UserAPIRegistration(APIView):
     def post(self, request):
@@ -27,19 +39,18 @@ class UserAPIRegistration(APIView):
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class UserAPILogin(APIView):
+    authentication_classes = []
 
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             user = serializer.validated_data['user']
             return Response({
-                'user': UserSerializer(user).data,
-                'tokens': serializer.get_tokens(serializer.validated_data)
+            'user': UserSerializer(user).data,
+            'tokens': serializer.get_tokens(serializer.validated_data)
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class UserAPILogout(APIView):
     permission_classes = [IsAuthenticated]
@@ -53,16 +64,12 @@ class UserAPILogout(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
 class UserAPIProfile(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
 
     def get_object(self):
         return self.request.user
-
-# class UsersAPIList(generics.ListAPIView)
-#     permission_classes = [IsAuthenticated]
 
 class UserAPIUpdate(APIView):
     permission_classes = [IsAuthenticated]
@@ -85,9 +92,6 @@ class DeleteAPIUser(APIView):
         user = request.user
         user.delete()
         return Response({'message': 'User account deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
-
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
 
 class ChangePasswordAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -112,7 +116,6 @@ class ChangePasswordAPI(APIView):
         user.save()
 
         return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
-
 
 class FlightAPIList(generics.ListAPIView):
     queryset = Flight.objects.all()
@@ -155,6 +158,21 @@ class MyBookingAPIDetails(generics.ListAPIView):
         user = self.request.user
         return Booking.objects.filter(user=user)
 
+class DeleteAPIUserBooking(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+    def perform_destroy(self, instance):
+        flight = instance.flight
+        flight.capacity += 1
+        flight.save()
+
+        passenger = instance.passenger
+        instance.delete()
+        if not Booking.objects.filter(passenger=passenger).exists():
+            passenger.delete()
+
 class BookingAPIConfirmation(generics.RetrieveAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingCodeSerializer
@@ -181,7 +199,7 @@ class BookingAPICreate(APIView):
                 passenger__name=name
             ).first()
             if existing_booking:
-                print("You have already booked this flight with this passenger name."),
+                # print("You have already booked this flight with this passenger name."),
                 return Response(
                     {"error": "You have already booked this flight."},
                     status=status.HTTP_400_BAD_REQUEST
@@ -248,16 +266,66 @@ class AdminUserListAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+
+        if User.objects.filter(email=data.get('email')).exists():
+            return Response({'email': ['A user with that email already exists.']}, status=status.HTTP_400_BAD_REQUEST)
+
+        if User.objects.filter(username=data.get('username')).exists():
+            return Response({'username': ['A user with that username already exists.']}, status=status.HTTP_400_BAD_REQUEST)
+
+        password = data.get('password')
+
+        try:
+            validate_password(password, user=None, password_validators=get_password_validators(settings.AUTH_PASSWORD_VALIDATORS))
+        except ValidationError as e:
+            return Response({'password': e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        user.set_password(password)
+        user.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class AdminUserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        data = request.data.copy()
+
+        new_email = data.get('email')
+        if new_email and User.objects.exclude(id=user.id).filter(email=new_email).exists():
+            return Response({'email': 'A user with that email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_password = data.get('password')
+        if new_password:
+            try:
+                validate_password(new_password, user=user)
+            except ValidationError as e:
+                return Response({'password': e.messages}, status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(new_password)
+
+        serializer = self.get_serializer(user, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        user.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class AdminBookingListAPIView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
-    queryset = Booking.objects.all()
-    serializer_class = BookingSerializer
+
+    def get(self, request, *args, **kwargs):
+        bookings = Booking.objects.filter(user_id=kwargs['pk'])
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # def register(request):
 #     if request.method == 'POST':

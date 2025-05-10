@@ -3,11 +3,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from unicodedata import normalize
 from .models import Flight, Booking, Passenger, Airport
+import logging
 
+logger = logging.getLogger(__name__)
 
 class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'is_staff']
@@ -24,6 +27,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def get_tokens(self, obj):
         refresh = RefreshToken.for_user(obj)
+
+        refresh['username'] = obj.username
+        refresh['email'] = obj.email
+        refresh['isAdmin'] = obj.is_staff
+
         return {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
@@ -51,9 +59,8 @@ class UserLoginSerializer(serializers.Serializer):
         trim_whitespace=False
     )
     tokens = serializers.SerializerMethodField()
-
     def get_tokens(self, obj):
-        user = User.objects.get(username=obj['username'])
+        user = User.objects.get(username__iexact=obj['username'])
         refresh = RefreshToken.for_user(user)
 
         refresh['username'] = user.username
@@ -70,11 +77,31 @@ class UserLoginSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if username and password:
-            user = authenticate(request=self.context.get('request'),
-                                username=username, password=password)
-            if not user:
+            normalized_username = username.lower()
+            try:
+                user_obj = User.objects.get(username__iexact=normalized_username)
+                logger.debug(f"Found user: {user_obj.username}")
+            except User.DoesNotExist:
+                logger.warning(f"Login failed: username '{normalized_username}' not found")
                 raise serializers.ValidationError(
-                    'Unable to log in with provided credentials.',
+                    'Invalid username or password.',
+                    code='authorization'
+                )
+            user = authenticate(
+                request=self.context.get('request'),
+                username=user_obj.username,
+                password=password
+            )
+            if not user:
+                logger.warning(f"Authentication failed for username: {normalized_username}")
+                raise serializers.ValidationError(
+                    'Invalid username or password.',
+                    code='authorization'
+                )
+            if not user.is_active:
+                logger.warning(f"Inactive user tried to login: {normalized_username}")
+                raise serializers.ValidationError(
+                    'This account is inactive.',
                     code='authorization'
                 )
         else:
@@ -82,7 +109,6 @@ class UserLoginSerializer(serializers.Serializer):
                 'Must include "username" and "password".',
                 code='authorization'
             )
-
         attrs['user'] = user
         return attrs
 

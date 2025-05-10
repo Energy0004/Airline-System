@@ -10,12 +10,12 @@ urlpatterns = [
     # path('manage-booking/', manage_booking, name='manage_booking'),
     # path('register/', register, name='register'),
     # path('accounts/', include('django.contrib.auth.urls')),
+    # path('promo-code/', promo_code),
     path('drf_auth/', include('rest_framework.urls')),
     path('auth/register/', UserAPIRegistration.as_view()),
     path('auth/login/', UserAPILogin.as_view()),
     path('auth/logout/', UserAPILogout.as_view()),
     path('auth/profile/', UserAPIProfile.as_view()),
-    # path('users/', UsersAPIList.as_view()),
     path('users/update/me/', UserAPIUpdate.as_view()),
     path('users/change-password/', ChangePasswordAPI.as_view()),
     path('users/delete/me/', DeleteAPIUser.as_view()),
@@ -33,7 +33,8 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
 
+    path('admin/bookings/<int:pk>', DeleteAPIUserBooking.as_view()),
     path('admin/users/', AdminUserListAPIView.as_view(), name='admin-user-list'),
     path('admin/users/<int:pk>/', AdminUserDetailAPIView.as_view(), name='admin-user-detail'),
-    path('admin/bookings/', AdminBookingListAPIView.as_view(), name='admin-booking-list')
+    path('admin/bookings/user/<int:pk>/', AdminBookingListAPIView.as_view(), name='admin-booking-list')
 ]
