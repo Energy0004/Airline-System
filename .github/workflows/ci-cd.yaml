@@ -50,7 +50,7 @@ jobs:
       - name: Deploy backend to server
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@51.20.34.116 '
-            aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 092446241709.dkr.ecr.eu-north-1.amazonaws.com &&
+            aws ecr get-login-password --region eu-north- | docker login --username AWS --password-stdin 092446241709.dkr.ecr.eu-north-1.amazonaws.com &&
             docker pull 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest &&
             docker-compose -f /home/ubuntu/docker-compose.yml up -d
           '
