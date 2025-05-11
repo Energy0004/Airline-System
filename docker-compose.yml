@@ -24,7 +24,7 @@ services:
 
   frontend:
     build:
-      context: C:/Users/Zhand/PycharmProjects/airline_system/Final Back/my-frontend
+      context: C:/Users/Zhand/PycharmProjects/airline_system/Final-Back/my-frontend
     ports:
       - "5173:5173"
     depends_on:
