@@ -32,7 +32,7 @@ jobs:
 
       - name: Build and push frontend image to ECR
         run: |
-          docker build -t 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest "final-back/my-frontend"
+          docker build -f ./final-back/my-frontend/Dockerfile -t 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest ./final-back/my-frontend
           docker push 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest
 
   deploy:
