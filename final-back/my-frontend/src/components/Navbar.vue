@@ -44,7 +44,7 @@
       const accessToken = localStorage.getItem('auth_token');
       //   console.log(accessToken);
       if (accessToken) {
-        fetch('http://127.0.0.1:8000/api/auth/profile/', {
+        fetch('http://51.20.34.116:8000/api/auth/profile/', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
           },
@@ -59,7 +59,7 @@
             console.error('Error fetching user profile:', error);
           });
       }
-      axios.get('http://127.0.0.1:8000/api/promo-code/', { withCredentials: true })
+      axios.get('http://51.20.34.116:8000/api/promo-code/', { withCredentials: true })
       .then(response => {
         const token = localStorage.getItem("auth_token");
         // console.log(response)
