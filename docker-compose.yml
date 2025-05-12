@@ -1,31 +1,28 @@
 services:
-  db:
-    image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      POSTGRES_DB: "airline_system"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "Maximum0004"
-    ports:
-      - "5432:5432"
-
   backend:
     image: 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest
-    command: gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/.env
     depends_on:
       - db
-    environment:
-      DATABASE_URL: "postgres://postgres:Maximum0004@db:5432/airline_system"
 
   frontend:
     image: 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest
     ports:
       - "80:80"
-    depends_on:
-      - backend
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: airline
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
   postgres_data:
