@@ -80,7 +80,7 @@
         this.error = null;
   
         axios
-          .get('http://127.0.0.1:8000/api/flights/')
+          .get(`${import.meta.env.VITE_API_URL}/api/flights/`)
           .then((response) => {
             this.flights = response.data;
           })
