@@ -11,7 +11,8 @@ services:
       - "5432:5432"
 
   backend:
-    build: .
+    build:
+      context: ./airline_system
     command: gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
@@ -22,7 +23,7 @@ services:
     environment:
       DATABASE_URL: "postgres://postgres:Maximum0004@db:5432/airline_system"
 
-  frontend:
+  frontend
     build:
 #      context: C:/Users/Zhand/PycharmProjects/airline_system/final-back/my-frontend
       context: ./final-back/my-frontend
