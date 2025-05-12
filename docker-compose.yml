@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "Maximum0004"
     ports:
-      - "5432:5432"
+      - "5432:5432
 
   backend:
     image: 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest
