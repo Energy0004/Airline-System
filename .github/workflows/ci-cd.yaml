@@ -27,13 +27,14 @@ jobs:
 
       - name: Build and push backend image to ECR
         run: |
-          docker build -t 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest 
+          docker build -t 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest .
           docker push 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest
 
       - name: Build and push frontend image to ECR
         run: |
-          docker build -f ./airline_system/final-back/my-frontend/Dockerfile -t 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest ./airline_system/final-back/my-frontend
+          docker build -f ./final-back/my-frontend/Dockerfile -t 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest ./final-back/my-frontend
           docker push 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest
+          
 
   deploy:
     runs-on: ubuntu-latest
