@@ -6,10 +6,9 @@ COPY package*.json ./
 
 RUN npm install
 
-# Make sure npm binaries are executable
-RUN chmod +x node_modules/.bin/*
-
 COPY . .
+
+RUN chmod +x node_modules/.bin/*
 
 EXPOSE 5173
 
