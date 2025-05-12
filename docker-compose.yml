@@ -11,7 +11,8 @@ services:
   frontend:
     image: 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest
     ports:
-      - "80:80"
+      - "80:80"  # 👈 this is the correct mapping
+    restart: always
 
   db:
     image: postgres:14
