@@ -11,11 +11,8 @@ services:
       - "5432:5432"
 
   backend:
-    build:
-      context: ./airline_system
+    image: 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest
     command: gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000
-    volumes:
-      - .:/app
     ports:
       - "8000:8000"
     depends_on:
@@ -24,13 +21,11 @@ services:
       DATABASE_URL: "postgres://postgres:Maximum0004@db:5432/airline_system"
 
   frontend:
-    build:
-      context: ./final-back/my-frontend
+    image: 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-frontend:latest
     ports:
       - "5173:5173"
     depends_on:
       - backend
-
 
 volumes:
   postgres_data:
