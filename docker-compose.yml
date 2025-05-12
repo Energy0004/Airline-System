@@ -23,7 +23,7 @@ services:
     environment:
       DATABASE_URL: "postgres://postgres:Maximum0004@db:5432/airline_system"
 
-  frontend
+  frontend:
     build:
 #      context: C:/Users/Zhand/PycharmProjects/airline_system/final-back/my-frontend
       context: ./final-back/my-frontend
