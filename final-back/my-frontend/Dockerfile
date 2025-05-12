@@ -1,15 +1,19 @@
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
 
 COPY . .
+RUN npm run build
 
-RUN chmod +x node_modules/.bin/*
+FROM nginx:alpine
 
-EXPOSE 5173
+RUN rm -rf /usr/share/nginx/html/*
 
-CMD ["npx", "vite", "--host"]
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
