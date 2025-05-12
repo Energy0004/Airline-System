@@ -25,7 +25,7 @@ jobs:
         run: |
           aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 092446241709.dkr.ecr.eu-north-1.amazonaws.com
 
-      - name: Build and push backend image to ECR
+      - name: Build and push backend mage to ECR
         run: |
           docker build -t 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest .
           docker push 092446241709.dkr.ecr.eu-north-1.amazonaws.com/airline-system-backend:latest
