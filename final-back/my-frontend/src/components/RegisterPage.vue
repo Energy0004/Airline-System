@@ -9,7 +9,7 @@
       <form @submit.prevent="submitForm">
         <!-- Username -->
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">Username/label>
           <input placeholder="Enter your username" type="text" id="username" v-model="username" required />
         </div>
 
