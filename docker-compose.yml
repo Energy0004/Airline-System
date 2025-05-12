@@ -25,7 +25,6 @@ services:
 
   frontend:
     build:
-#      context: C:/Users/Zhand/PycharmProjects/airline_system/final-back/my-frontend
       context: ./final-back/my-frontend
     ports:
       - "5173:5173"
