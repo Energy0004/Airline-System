@@ -24,4 +24,4 @@ RUN python manage.py collectstatic --noinput
 # Дать права на папку проекта
 RUN chmod -R 755 /app && chown -R www-data:www-data /app
 
-CMD sh -c "python manage.pymigrate --noinput && gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000"
+CMD sh -c "python manage.py migrate --noinput && gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000"
