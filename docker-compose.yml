@@ -14,7 +14,7 @@ services:
     build:
       context: ./airline_system
     command: gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000
-    volumes:
+    volumes
       - .:/app
     ports:
       - "8000:8000"
