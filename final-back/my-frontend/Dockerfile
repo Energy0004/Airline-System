@@ -6,11 +6,11 @@ COPY package*.json ./
 
 RUN npm install
 
-# Add the line below to give execute permission to all npm binaries
+# Make sure npm binaries are executable
 RUN chmod +x node_modules/.bin/*
 
 COPY . .
 
 EXPOSE 5173
 
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["npx", "vite", "--host"]
