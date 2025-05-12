@@ -22,6 +22,6 @@ EXPOSE 8000
 RUN python manage.py collectstatic --noinput
 
 # Дать права на папку проекта
-UN chmod -R 755 /app && chown -R www-data:www-data /app
+RUN chmod -R 755 /app && chown -R www-data:www-data /app
 
 CMD sh -c "python manage.py migrate --noinput && gunicorn airline_system.wsgi:application --bind 0.0.0.0:8000"
