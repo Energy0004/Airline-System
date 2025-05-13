@@ -91,7 +91,7 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'airline_system',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'Maximum0004',
         'HOST': 'db',
