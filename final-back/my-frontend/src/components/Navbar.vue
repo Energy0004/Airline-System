@@ -59,7 +59,7 @@
             console.error('Error fetching user profile:', error);
           });
       }
-      axios.get('http://51.20.34.116:8000/api/promo-code/', { withCredentials: true })
+      axios.get(`${import.meta.env.VITE_API_URL}/api/promo-code/`, { withCredentials: true })
       .then(response => {
         const token = localStorage.getItem("auth_token");
         // console.log(response)
