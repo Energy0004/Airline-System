@@ -68,7 +68,7 @@
   
         // Send login request with username, and password
         axios
-          .post(`${import.meta.env.VITE_API_URL}/api/auth/login/`, {
+          .post('http://51.20.34.116:8000/api/auth/login/', {
             username: this.username,
             password: this.password,
           })
