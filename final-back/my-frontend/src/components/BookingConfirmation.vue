@@ -18,6 +18,7 @@
     
     <script>
     import axios from 'axios';
+  const API = import.meta.env.VITE_API_URL;
 
     export default {
         data() {
@@ -37,7 +38,7 @@
             const token = localStorage.getItem('auth_token');
             const bookingId = this.$route.params.id;
             axios
-            .get(`http://127.0.0.1:8000/api/booking-confirmation/${bookingId}`,{
+            .get(`${API}api/booking-confirmation/${bookingId}`,{
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

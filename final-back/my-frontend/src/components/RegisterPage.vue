@@ -45,6 +45,7 @@
 </template>
 
 <script>
+  const API = import.meta.env.VITE_API_URL;
   export default {
     name: "RegisterPage",
     data() {
@@ -71,7 +72,7 @@
         };
   
         try {
-          const response = await fetch("http://51.20.34.116:8000/api/auth/register/", {
+          const response = await fetch(`${API}api/auth/register/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

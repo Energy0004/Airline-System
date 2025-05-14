@@ -30,6 +30,7 @@
   </template>
   <script>
   import axios from 'axios';
+  const API = import.meta.env.VITE_API_URL;
 
   export default {
     name: 'Navbar',
@@ -44,7 +45,7 @@
       const accessToken = localStorage.getItem('auth_token');
       //   console.log(accessToken);
       if (accessToken) {
-        fetch('http://51.20.34.116:8000/api/auth/profile/', {
+        fetch(`${API}api/auth/profile/`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
           },
@@ -59,7 +60,7 @@
             console.error('Error fetching user profile:', error);
           });
       }
-      axios.get('http://51.20.34.116:8000/api/promo-code/', { withCredentials: true })
+      axios.get(`${API}api/promo-code/`, { withCredentials: true })
       .then(response => {
         const token = localStorage.getItem("auth_token");
         // console.log(response)

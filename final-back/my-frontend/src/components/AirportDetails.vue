@@ -73,6 +73,7 @@
 
 <script>
 import axios from "axios";
+  const API = import.meta.env.VITE_API_URL;
 
 export default {
   name: "AirportInfo",
@@ -87,7 +88,7 @@ export default {
     fetchAirportData() {
       const airportId = this.$route.params.id;
       axios
-        .get(`http://127.0.0.1:8000/api/airports/${airportId}/`)
+        .get(`${API}api/airports/${airportId}/`)
         .then((response) => {
           this.airport = response.data.airport;
           this.departures = response.data.departures;

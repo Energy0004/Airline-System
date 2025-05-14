@@ -41,6 +41,7 @@
   <script>
   import axios from 'axios';
   import { format } from 'date-fns';
+  const API = import.meta.env.VITE_API_URL;
 
   export default {
     name: 'BookingDetails',
@@ -61,7 +62,7 @@
         const bookingCode = this.$route.params.code;
         console.log("Here is the booking code:", bookingCode);
         axios
-          .get(`http://127.0.0.1:8000/api/bookings/${bookingCode}/`, {
+          .get(`${API}api/bookings/${bookingCode}/`, {
             headers: {
                 Authorization: `Bearer ${token}`
             },

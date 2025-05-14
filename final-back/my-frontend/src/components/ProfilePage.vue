@@ -3,7 +3,7 @@
   import { jwtDecode } from 'jwt-decode';
   import { format } from 'date-fns';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-
+  const API = import.meta.env.VITE_API_URL;
   
   export default {
     name: 'Profile',
@@ -72,7 +72,7 @@
             return format(date, 'MMMM d, yyyy h:mm a'); // May 7, 2025 12:09 AM
         },
       fetchUserData() {
-        axios.get('http://127.0.0.1:8000/api/my_bookings/')
+        axios.get(`${API}api/my_bookings/`)
           .then(response => {
             this.bookings = response.data;
           })
@@ -83,7 +83,7 @@
       updateUser() {
         this.updateUserErrors = null; // сбрасываем ошибки
         const token = localStorage.getItem('auth_token');
-        axios.put('http://127.0.0.1:8000/api/users/update/me/', {
+        axios.put(`${API}api/users/update/me/`, {
           username: this.user.username,
           email: this.user.email
         }, {
@@ -104,7 +104,7 @@
       updatePassword() {
         this.updatePasswordErrors = null;
         const token = localStorage.getItem('auth_token');
-        axios.put('http://127.0.0.1:8000/api/users/change-password/', {
+        axios.put(`${API}api/users/change-password/`, {
           new_password: this.passwordForm.new_password,
           confirm_password: this.passwordForm.confirm_password
         }, {
@@ -129,7 +129,7 @@
       deleteUser() {
         const token = localStorage.getItem("auth_token");
 
-        axios.delete('http://127.0.0.1:8000/api/users/delete/me/', {
+        axios.delete(`${API}api/users/delete/me/`, {
           headers: { Authorization: `Bearer ${token}` }
         })
           .then(() => {
@@ -145,7 +145,7 @@
         this.showModal = false;
       },
       fetchAllUsers() {
-        axios.get('http://127.0.0.1:8000/api/admin/users')
+        axios.get(`${API}api/admin/users`)
           .then(response => {
             this.users = response.data;
           })
@@ -162,7 +162,7 @@
         this.updateUserErrors = ''
       },
       updateSelectedUser() {
-        axios.put(`http://127.0.0.1:8000/api/admin/users/${this.selectedUser.id}/`, this.selectedUser)
+        axios.put(`${API}api/admin/users/${this.selectedUser.id}/`, this.selectedUser)
           .then(() => {
             this.showToastUpdated = true;
             setTimeout(() => this.showToastUpdated = false, 4000);
@@ -185,7 +185,7 @@
         this.selectedUserToDelete = null;
       },
       confirmDeleteUser() {
-        axios.delete(`http://127.0.0.1:8000/api/admin/users/${this.selectedUserToDelete.id}/`)
+        axios.delete(`${API}api/admin/users/${this.selectedUserToDelete.id}/`)
           .then(() => {
             this.showToastDeleted = true;
             setTimeout(() => this.showToastDeleted = false, 4000);
@@ -197,7 +197,7 @@
           });
       },
       createUser() {
-        axios.post('http://127.0.0.1:8000/api/admin/users/', this.newUser)
+        axios.post(`${API}api/admin/users/`, this.newUser)
           .then(() => {
             this.showToastCreated = true;
             setTimeout(() => this.showToastCreated = false, 4000);

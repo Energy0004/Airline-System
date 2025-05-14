@@ -54,6 +54,7 @@
 <script>
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+  const API = import.meta.env.VITE_API_URL;
 
 export default {
   name: 'BookFlight',
@@ -89,7 +90,7 @@ export default {
     fetchFlightDetails() {
       const flightId = this.$route.params.id;
       axios
-        .get(`http://127.0.0.1:8000/api/flights/${flightId}/`)
+        .get(`${API}api/flights/${flightId}/`)
         .then((response) => {
           this.flight = response.data;
         })
@@ -106,7 +107,7 @@ export default {
         const flightId = this.$route.params.id;
 
         axios
-            .post(`http://127.0.0.1:8000/api/bookings/`,{
+            .post(`${API}api/bookings/`,{
                 flight_id: flightId,
                 username: this.passenger.username,
                 email: this.passenger.email,

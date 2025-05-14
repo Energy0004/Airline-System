@@ -52,6 +52,7 @@
 <script>
 import axios from 'axios';
 import { format } from 'date-fns';
+  const API = import.meta.env.VITE_API_URL;
 
 export default {
   name: 'AdminUserBookingsPage',
@@ -72,7 +73,7 @@ export default {
     fetchBookings() {
       const userId = this.$route.params.userId;
       axios
-        .get(`http://51.20.34.116/api/admin/bookings/user/${userId}`, {
+        .get(`${API}api/admin/bookings/user/${userId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
         })
         .then((res) => {
@@ -92,7 +93,7 @@ export default {
     },
     confirmDelete() {
       axios
-        .delete(`http://127.0.0.1:8000/api/admin/bookings/${this.selectedBooking.id}`, {
+        .delete(`${API}api/admin/bookings/${this.selectedBooking.id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
         })
         .then(() => {

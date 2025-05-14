@@ -34,6 +34,7 @@
   <script>
 import axios from 'axios';
 import { isAuthenticated } from '../utils/auth.js';
+  const API = import.meta.env.VITE_API_URL;
 
 export default {
   name: 'ManageBooking',
@@ -59,7 +60,7 @@ export default {
       console.log('Submitting booking code:', this.bookingCode);
 
       axios.post(
-        `http://127.0.0.1:8000/api/manage-booking/`,
+        `${API}api/manage-booking/`,
         { code: this.bookingCode },
         {
           headers: {

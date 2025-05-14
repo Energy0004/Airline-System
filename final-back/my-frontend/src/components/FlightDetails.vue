@@ -63,7 +63,8 @@
   
   <script>
   import axios from 'axios';
-  
+    const API = import.meta.env.VITE_API_URL;
+
   export default {
     name: 'FlightDetails',
     data() {
@@ -85,7 +86,7 @@
   
         const flightId = this.$route.params.id;
         axios
-          .get(`http://127.0.0.1:8000/api/flights/${flightId}/`)
+          .get(`${API}api/flights/${flightId}/`)
           .then((response) => {
             this.flight = response.data;
           })
