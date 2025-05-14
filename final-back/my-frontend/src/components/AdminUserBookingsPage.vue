@@ -72,7 +72,7 @@ export default {
     fetchBookings() {
       const userId = this.$route.params.userId;
       axios
-        .get(`http://127.0.0.1:8000/api/admin/bookings/user/${userId}`, {
+        .get(`http://51.20.34.116/api/admin/bookings/user/${userId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
         })
         .then((res) => {

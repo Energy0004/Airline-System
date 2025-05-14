@@ -59,7 +59,9 @@
 
 <script>
   import axios from 'axios';
-  
+  const API = import.meta.env.VITE_API_URL;
+
+
   export default {
     name: 'FlightList',
     data() {
@@ -80,7 +82,7 @@
         this.error = null;
   
         axios
-          .get('http://51.20.34.116:8000/api/flights/')
+          .get(`${API}api/flights/`)
           .then((response) => {
             this.flights = response.data;
           })

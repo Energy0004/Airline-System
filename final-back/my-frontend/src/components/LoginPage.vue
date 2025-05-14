@@ -47,6 +47,8 @@
 
 <script>
   import axios from 'axios';
+  const API = import.meta.env.VITE_API_URL;
+
   
   export default {
     name: 'LoginPage',
@@ -68,7 +70,7 @@
   
         // Send login request with username, and password
         axios
-          .post('http://51.20.34.116:8000/api/auth/login/', {
+          .post(`${API}api/auth/login/`, {
             username: this.username,
             password: this.password,
           })
