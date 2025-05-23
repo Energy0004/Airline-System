@@ -14,7 +14,7 @@ class PromoCodeMiddleware:
             if not saved_promo_code:
                 promo_code = self.generate_promo_code()
                 response = JsonResponse({'promo_code': promo_code})
-                response.set_cookie('promo_code', promo_code, max_age=30*24*60*60, samesite='None', secure=True)
+                response.set_cookie('promo_code', promo_code, max_age=30*24*60*60, samesite='Lax', secure=False)
             else:
                 response = JsonResponse({'promo_code': saved_promo_code})
 
