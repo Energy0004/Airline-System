@@ -61,6 +61,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'airline_system.urls'
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://zydevlab.duckdns.org"
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
